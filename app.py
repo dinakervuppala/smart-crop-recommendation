@@ -54,35 +54,34 @@ language = st.sidebar.selectbox(
     "Select Language",
     ["en","hi","ta","te","kn","ml","mr","bn","gu","pa"]
 )
-
 if st.sidebar.button("Recommend Crop"):
     input_data = pd.DataFrame(
-        [[N,P,K,temperature,humidity,ph,rainfall]],
+        [[N, P, K, temperature, humidity, ph, rainfall]],
         columns=features
     )
 
     crop = model.predict(input_data)[0]
     predicted_crop = crop.lower()
 
-translated_crop = crop_translation.get(
-    predicted_crop, {}
-).get(language, predicted_crop.capitalize())
+    translated_crop = crop_translation.get(
+        predicted_crop, {}
+    ).get(language, predicted_crop.capitalize())
 
-st.markdown(f"""
-<div style="
-    background-color:#e8f5e9;
-    padding:25px;
-    border-radius:15px;
-    text-align:center;
-    font-size:28px;
-    font-weight:bold;
-    color:#1b5e20;
-">
-🌾 Recommended Crop<br>
-{translated_crop}
-</div>
-""", unsafe_allow_html=True)
-    
+    st.markdown(f"""
+    <div style="
+        background-color:#e8f5e9;
+        padding:25px;
+        border-radius:15px;
+        text-align:center;
+        font-size:28px;
+        font-weight:bold;
+        color:#1b5e20;
+    ">
+    🌾 Recommended Crop<br>
+    {translated_crop}
+    </div>
+    """, unsafe_allow_html=True)
+
     st.subheader("Feature Importance")
     fig, ax = plt.subplots()
     ax.barh(features, model.feature_importances_)
