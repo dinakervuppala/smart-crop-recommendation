@@ -3,7 +3,6 @@ import pandas as pd
 import joblib
 import base64
 import matplotlib.pyplot as plt
-from deep_translator import GoogleTranslator
 crop_translation = {
     "rice": {"English": "Rice", "Telugu": "వరి", "Hindi": "चावल", "Tamil": "அரிசி"},
     "maize": {"English": "Maize", "Telugu": "మొక్కజొన్న", "Hindi": "मक्का", "Tamil": "சோளம்"},
@@ -83,11 +82,7 @@ st.markdown(f"""
 {translated_crop}
 </div>
 """, unsafe_allow_html=True)
-    text = f"Recommended Crop: {crop}"
-    translated = GoogleTranslator(source="auto", target=language).translate(text)
-
-    st.success(translated)
-
+    
     st.subheader("Feature Importance")
     fig, ax = plt.subplots()
     ax.barh(features, model.feature_importances_)
