@@ -4,6 +4,13 @@ import joblib
 import base64
 import matplotlib.pyplot as plt
 from deep_translator import GoogleTranslator
+crop_translation = {
+    "rice": {"English": "Rice", "Telugu": "వరి", "Hindi": "चावल", "Tamil": "அரிசி"},
+    "maize": {"English": "Maize", "Telugu": "మొక్కజొన్న", "Hindi": "मक्का", "Tamil": "சோளம்"},
+    "chickpea": {"English": "Chickpea", "Telugu": "సెనగలు", "Hindi": "चना", "Tamil": "கொண்டைக்கడலை"},
+    "cotton": {"English": "Cotton", "Telugu": "పత్తి", "Hindi": "कपास", "Tamil": "பருத்தி"},
+    "banana": {"English": "Banana", "Telugu": "అరటి", "Hindi": "केला", "Tamil": "வாழைப்பழம்"}
+}
 
 model = joblib.load("crop_model.pkl")
 features = joblib.load("feature_names.pkl")
@@ -29,6 +36,10 @@ def add_bg(image):
 add_bg("background.jpg")
 
 st.title("🌾 Smart Crop Recommendation System")
+language = st.selectbox(
+    "🌐 Select Language",
+    ["English", "Telugu", "Hindi", "Tamil"]
+)
 
 st.sidebar.header("Enter Soil & Climate Values")
 
@@ -52,6 +63,26 @@ if st.sidebar.button("Recommend Crop"):
     )
 
     crop = model.predict(input_data)[0]
+    predicted_crop = crop.lower()
+
+translated_crop = crop_translation.get(
+    predicted_crop, {}
+).get(language, predicted_crop.capitalize())
+
+st.markdown(f"""
+<div style="
+    background-color:#e8f5e9;
+    padding:25px;
+    border-radius:15px;
+    text-align:center;
+    font-size:28px;
+    font-weight:bold;
+    color:#1b5e20;
+">
+🌾 Recommended Crop<br>
+{translated_crop}
+</div>
+""", unsafe_allow_html=True)
     text = f"Recommended Crop: {crop}"
     translated = GoogleTranslator(source="auto", target=language).translate(text)
 
