@@ -74,7 +74,7 @@ if st.sidebar.button("Recommend Crop"):
         [[N, P, K, temperature, humidity, ph, rainfall]],
         columns=features
     )
-pip install deep-translator
+
 from deep_translator import GoogleTranslator
     def translate_crop(crop, language):
 
