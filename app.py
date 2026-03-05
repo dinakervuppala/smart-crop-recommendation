@@ -198,10 +198,16 @@ if st.sidebar.button("Recommend Crop"):
     # Explainable AI
     st.subheader("🤖 Explainable AI - Feature Importance")
 
-    explainer = shap.TreeExplainer(model)
-    shap_values = explainer.shap_values(input_data)
+   explainer = shap.TreeExplainer(model)
+shap_values = explainer.shap_values(input_data)
 
-    fig, ax = plt.subplots()
-    shap.summary_plot(shap_values, input_data, feature_names=features, show=False)
+st.subheader("🤖 Explainable AI - Feature Contribution")
 
-    st.pyplot(fig)
+fig, ax = plt.subplots()
+
+ax.barh(features, shap_values[0])
+
+ax.set_xlabel("Impact on Prediction")
+ax.set_title("Feature Importance for this Prediction")
+
+st.pyplot(fig)
