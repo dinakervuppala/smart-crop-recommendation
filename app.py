@@ -10,6 +10,13 @@ crop_translation = {
     "cotton": {"English": "Cotton", "Telugu": "పత్తి", "Hindi": "कपास", "Tamil": "பருத்தி"},
     "banana": {"English": "Banana", "Telugu": "అరటి", "Hindi": "केला", "Tamil": "வாழைப்பழம்"}
 }
+fertilizer_recommendation = {
+    "rice": "Use Urea, DAP, and Potash fertilizers.",
+    "maize": "Use Nitrogen rich fertilizers like Urea and NPK.",
+    "chickpea": "Use Phosphorus fertilizers like DAP.",
+    "cotton": "Use NPK fertilizers and organic compost.",
+    "banana": "Use Potassium rich fertilizers and organic manure."
+}
 
 model = joblib.load("crop_model.pkl")
 features = joblib.load("feature_names.pkl")
@@ -49,10 +56,9 @@ temperature = st.sidebar.number_input("Temperature (°C)", 0.0, 50.0)
 humidity = st.sidebar.number_input("Humidity (%)", 0.0, 100.0)
 ph = st.sidebar.number_input("Soil pH", 0.0, 14.0)
 rainfall = st.sidebar.number_input("Rainfall (mm)", 0.0, 500.0)
-
 language = st.sidebar.selectbox(
-    "Select Language",
-    ["en","hi","ta","te","kn","ml","mr","bn","gu","pa"]
+    "🌐 Select Language",
+    ["English","Telugu","Hindi","Tamil"]
 )
 if st.sidebar.button("Recommend Crop"):
     input_data = pd.DataFrame(
@@ -67,22 +73,24 @@ if st.sidebar.button("Recommend Crop"):
         predicted_crop, {}
     ).get(language, predicted_crop.capitalize())
 
-    st.markdown(f"""
-    <div style="
-        background-color:#e8f5e9;
-        padding:25px;
-        border-radius:15px;
-        text-align:center;
-        font-size:28px;
-        font-weight:bold;
-        color:#1b5e20;
-    ">
-    🌾 Recommended Crop<br>
-    {translated_crop}
-    </div>
-    """, unsafe_allow_html=True)
+   fertilizer = fertilizer_recommendation.get(predicted_crop, "Use general organic fertilizers.")
 
-    st.subheader("Feature Importance")
-    fig, ax = plt.subplots()
-    ax.barh(features, model.feature_importances_)
-    st.pyplot(fig)
+st.markdown(f"""
+<div style="
+    background-color:#e8f5e9;
+    padding:25px;
+    border-radius:15px;
+    text-align:center;
+    font-size:26px;
+    font-weight:bold;
+    color:#1b5e20;
+">
+
+🌾 Recommended Crop : {translated_crop}
+
+<br><br>
+
+🌱 Recommended Fertilizer : {fertilizer}
+
+</div>
+""", unsafe_allow_html=True)
