@@ -81,7 +81,6 @@ if st.sidebar.button("Recommend Crop"):
     )
 
 from deep_translator import GoogleTranslator
-    def translate_crop(crop, language):
 
     lang_codes = {
         "English":"en",
