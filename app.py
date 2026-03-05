@@ -60,7 +60,7 @@ language = st.sidebar.selectbox(
     "🌐 Select Language",
     ["English","Telugu","Hindi","Tamil"]
 )
-    if st.sidebar.button("Recommend Crop"):
+if st.sidebar.button("Recommend Crop"):
     input_data = pd.DataFrame(
         [[N, P, K, temperature, humidity, ph, rainfall]],
         columns=features
