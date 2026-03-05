@@ -78,16 +78,14 @@ if st.sidebar.button("Recommend Crop"):
         "Use general organic fertilizers."
     )
 
-   st.markdown(f"""
-<div style="
-background-color:#e8f5e9;
+    st.markdown(f"""
+<div style="background-color:#e8f5e9;
 padding:25px;
 border-radius:15px;
 text-align:center;
 font-size:26px;
 font-weight:bold;
-color:#1b5e20;
-">
+color:#1b5e20;">
 
 Recommended Crop : {translated_crop}
 
@@ -97,3 +95,4 @@ Recommended Fertilizer : {fertilizer}
 
 </div>
 """, unsafe_allow_html=True)
+ 
