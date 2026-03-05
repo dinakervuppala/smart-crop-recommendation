@@ -60,7 +60,7 @@ language = st.sidebar.selectbox(
     "🌐 Select Language",
     ["English","Telugu","Hindi","Tamil"]
 )
-if st.sidebar.button("Recommend Crop"):
+    if st.sidebar.button("Recommend Crop"):
     input_data = pd.DataFrame(
         [[N, P, K, temperature, humidity, ph, rainfall]],
         columns=features
@@ -73,10 +73,13 @@ if st.sidebar.button("Recommend Crop"):
         predicted_crop, {}
     ).get(language, predicted_crop.capitalize())
 
-   fertilizer = fertilizer_recommendation.get(predicted_crop, "Use general organic fertilizers.")
+    fertilizer = fertilizer_recommendation.get(
+        predicted_crop,
+        "Use general organic fertilizers."
+    )
 
-st.markdown(f"""
-<div style="
+    st.markdown(f"""
+    <div style="
     background-color:#e8f5e9;
     padding:25px;
     border-radius:15px;
@@ -84,12 +87,14 @@ st.markdown(f"""
     font-size:26px;
     font-weight:bold;
     color:#1b5e20;
-">
+    ">
+    🌾 Recommended Crop : {translated_crop}
 
-🌾 Recommended Crop : {translated_crop}
+    <br><br>
 
-<br><br>
-
+    🌱 Recommended Fertilizer : {fertilizer}
+    </div>
+    """, unsafe_allow_html=True)
 🌱 Recommended Fertilizer : {fertilizer}
 
 </div>
