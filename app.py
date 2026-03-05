@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import joblib
 import base64
-import shap
 import matplotlib.pyplot as plt
 from deep_translator import GoogleTranslator
 from gtts import gTTS
@@ -196,14 +195,16 @@ if st.sidebar.button("Recommend Crop"):
     st.audio(temp_audio.name)
 
     # 🤖 Explainable AI
-st.subheader("🤖 Explainable AI - Feature Contribution")
+# 🤖 Explainable AI
+st.subheader("🤖 Explainable AI - Feature Importance")
 
-explainer = shap.TreeExplainer(model)
+importance = model.feature_importances_
 
-shap_values = explainer(input_data)
+fig, ax = plt.subplots()
 
-fig = plt.figure()
+ax.barh(features, importance)
 
-shap.plots.waterfall(shap_values[0], show=False)
+ax.set_xlabel("Importance Score")
+ax.set_title("Which Factors Influenced Crop Recommendation")
 
 st.pyplot(fig)
