@@ -58,7 +58,7 @@ language = st.selectbox(
         "Punjabi",
         "Odia"
     ]
-
+)
 st.sidebar.header("Enter Soil & Climate Values")
 
 N = st.sidebar.number_input("Nitrogen (N)", 0, 200)
