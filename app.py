@@ -196,16 +196,14 @@ if st.sidebar.button("Recommend Crop"):
     st.audio(temp_audio.name)
 
     # 🤖 Explainable AI
-    st.subheader("Explainable AI - Feature Contribution")
+st.subheader("🤖 Explainable AI - Feature Contribution")
 
-    explainer = shap.TreeExplainer(model)
-    shap_values = explainer.shap_values(input_data)
+explainer = shap.TreeExplainer(model)
 
-    fig, ax = plt.subplots()
+shap_values = explainer(input_data)
 
-    ax.barh(features, abs(shap_values[0]))
+fig = plt.figure()
 
-    ax.set_xlabel("Impact on Prediction")
-    ax.set_title("Feature Importance")
+shap.plots.waterfall(shap_values[0], show=False)
 
-    st.pyplot(fig)
+st.pyplot(fig)
