@@ -186,7 +186,7 @@ if st.sidebar.button("Recommend Crop"):
     if predicted_crop in crop_images:
         st.image(crop_images[predicted_crop], width=400)
 
-    # Voice Output
+    # 🔊 Voice Output
     speech = f"Recommended crop is {predicted_crop}. Fertilizer recommendation is {fertilizer}"
     tts = gTTS(speech)
 
@@ -195,19 +195,17 @@ if st.sidebar.button("Recommend Crop"):
 
     st.audio(temp_audio.name)
 
-    # Explainable AI
-    st.subheader("🤖 Explainable AI - Feature Importance")
+    # 🤖 Explainable AI
+    st.subheader("Explainable AI - Feature Contribution")
 
-   explainer = shap.TreeExplainer(model)
-shap_values = explainer.shap_values(input_data)
+    explainer = shap.TreeExplainer(model)
+    shap_values = explainer.shap_values(input_data)
 
-st.subheader("🤖 Explainable AI - Feature Contribution")
+    fig, ax = plt.subplots()
 
-fig, ax = plt.subplots()
+    ax.barh(features, abs(shap_values[0]))
 
-ax.barh(features, shap_values[0])
+    ax.set_xlabel("Impact on Prediction")
+    ax.set_title("Feature Importance")
 
-ax.set_xlabel("Impact on Prediction")
-ax.set_title("Feature Importance for this Prediction")
-
-st.pyplot(fig)
+    st.pyplot(fig)
