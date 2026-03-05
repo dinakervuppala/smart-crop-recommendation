@@ -12,12 +12,17 @@ crop_translation = {
 }
 
 fertilizer_recommendation = {
-    "rice": "Use Urea, DAP, and Potash fertilizers.",
-    "maize": "Use Nitrogen rich fertilizers like Urea and NPK.",
-    "chickpea": "Use Phosphorus fertilizers like DAP.",
-    "cotton": "Use NPK fertilizers and organic compost.",
-    "banana": "Use Potassium rich fertilizers and organic manure."
+    "rice": "Use NPK fertilizer and organic compost.",
+    "maize": "Use Nitrogen rich fertilizer and farmyard manure.",
+    "cotton": "Use potash fertilizer and urea.",
+    "banana": "Use potassium rich fertilizer.",
 }
+def translate_crop(crop, language):
+    try:
+        translated = GoogleTranslator(source='auto', target=language).translate(crop)
+        return translated
+    except:
+        return crop
 
 model = joblib.load("crop_model.pkl")
 features = joblib.load("feature_names.pkl")
