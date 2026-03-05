@@ -10,6 +10,7 @@ crop_translation = {
     "cotton": {"English": "Cotton", "Telugu": "పత్తి", "Hindi": "कपास", "Tamil": "பருத்தி"},
     "banana": {"English": "Banana", "Telugu": "అరటి", "Hindi": "केला", "Tamil": "வாழைப்பழம்"}
 }
+
 fertilizer_recommendation = {
     "rice": "Use Urea, DAP, and Potash fertilizers.",
     "maize": "Use Nitrogen rich fertilizers like Urea and NPK.",
@@ -44,8 +45,19 @@ add_bg("background.jpg")
 st.title("🌾 Smart Crop Recommendation System")
 language = st.selectbox(
     "🌐 Select Language",
-    ["English", "Telugu", "Hindi", "Tamil"]
-)
+    [
+        "English",
+        "Hindi",
+        "Telugu",
+        "Tamil",
+        "Kannada",
+        "Malayalam",
+        "Marathi",
+        "Bengali",
+        "Gujarati",
+        "Punjabi",
+        "Odia"
+    ]
 
 st.sidebar.header("Enter Soil & Climate Values")
 
@@ -62,16 +74,41 @@ if st.sidebar.button("Recommend Crop"):
         [[N, P, K, temperature, humidity, ph, rainfall]],
         columns=features
     )
+pip install deep-translator
+from deep_translator import GoogleTranslator
+    def translate_crop(crop, language):
 
-    crop = model.predict(input_data)[0]
-    predicted_crop = crop.lower()
+    lang_codes = {
+        "English":"en",
+        "Hindi":"hi",
+        "Telugu":"te",
+        "Tamil":"ta",
+        "Kannada":"kn",
+        "Malayalam":"ml",
+        "Marathi":"mr",
+        "Bengali":"bn",
+        "Gujarati":"gu",
+        "Punjabi":"pa",
+        "Odia":"or"
+    }
 
-    translated_crop = crop_translation.get(
-        predicted_crop, {}
-    ).get(language, predicted_crop.capitalize())
+    if language == "English":
+        return crop.capitalize()
 
-    fertilizer = fertilizer_recommendation.get(
-        predicted_crop,
+    try:
+        translated = GoogleTranslator(
+            source='auto',
+            target=lang_codes[language]
+        ).translate(crop)
+
+        return translated
+
+    except:
+        return crop.capitalize()
+        translated_crop = translate_crop(predicted_crop, language)
+
+   translated_fertilizer = translate_crop(fertilizer, language)
+st.write(translated_fertilizer)
         "Use general organic fertilizers."
     )
 
@@ -88,7 +125,7 @@ Recommended Crop : {translated_crop}
 
 <br><br>
 
-Recommended Fertilizer : {fertilizer}
+Recommended Fertilizer : {translated_fertilizer}
 
 </div>
 """, unsafe_allow_html=True)
