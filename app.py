@@ -56,10 +56,7 @@ temperature = st.sidebar.number_input("Temperature (°C)", 0.0, 50.0)
 humidity = st.sidebar.number_input("Humidity (%)", 0.0, 100.0)
 ph = st.sidebar.number_input("Soil pH", 0.0, 14.0)
 rainfall = st.sidebar.number_input("Rainfall (mm)", 0.0, 500.0)
-language = st.sidebar.selectbox(
-    "🌐 Select Language",
-    ["English","Telugu","Hindi","Tamil"]
-)
+
 if st.sidebar.button("Recommend Crop"):
     input_data = pd.DataFrame(
         [[N, P, K, temperature, humidity, ph, rainfall]],
