@@ -1,7 +1,8 @@
 streamlit
 pandas
-numpy
-scikit-learn
 joblib
-matplotlib
 deep-translator
+shap
+matplotlib
+gtts
+requests
