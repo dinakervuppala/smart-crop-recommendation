@@ -10,54 +10,72 @@ from gtts import gTTS
 import requests
 import tempfile
 
-# Load ML model
-model = joblib.load("crop_model.pkl")
 # -------------------------------
-# MODEL ACCURACY DISPLAY
+# PAGE CONFIG
 # -------------------------------
-if st.button("Show Model Accuracy"):
-
-    df = pd.read_csv("Crop_recommendation.csv")
-
-    X = df.drop("label", axis=1)
-    y = df["label"]
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
-
-    y_pred = model.predict(X_test)
-
-    acc = accuracy_score(y_test, y_pred)
-
-    st.success(f"Model Accuracy: {acc:.2f}")
-features = joblib.load("feature_names.pkl")
-
 st.set_page_config(page_title="Smart Crop Recommendation", layout="wide")
 
-# Background Image
-def add_bg(image):
-    with open(image, "rb") as f:
-        encoded = base64.b64encode(f.read()).decode()
+# -------------------------------
+# LOAD MODEL
+# -------------------------------
+model = joblib.load("crop_model.pkl")
+features = joblib.load("feature_names.pkl")
 
-    st.markdown(
-        f"""
-        <style>
-        .stApp {{
-            background-image: url("data:image/jpg;base64,{encoded}");
-            background-size: cover;
-            background-position: center;
-        }}
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+# -------------------------------
+# MODEL ACCURACY DISPLAY (SAFE)
+# -------------------------------
+if st.button("Show Model Accuracy"):
+    try:
+        df = pd.read_csv("Crop_recommendation.csv")
+
+        X = df.drop("label", axis=1)
+        y = df["label"]
+
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42
+        )
+
+        y_pred = model.predict(X_test)
+        acc = accuracy_score(y_test, y_pred)
+
+        st.success(f"Model Accuracy: {acc:.2f}")
+
+    except:
+        st.warning("Dataset not found. Upload CSV to GitHub to see accuracy.")
+
+# -------------------------------
+# BACKGROUND IMAGE
+# -------------------------------
+def add_bg(image):
+    try:
+        with open(image, "rb") as f:
+            encoded = base64.b64encode(f.read()).decode()
+
+        st.markdown(
+            f"""
+            <style>
+            .stApp {{
+                background-image: url("data:image/jpg;base64,{encoded}");
+                background-size: cover;
+                background-position: center;
+            }}
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+    except:
+        pass
 
 add_bg("background.jpg")
 
+# -------------------------------
+# TITLE
+# -------------------------------
 st.title("🌾 Smart Crop Recommendation System")
 
-# Language Options
+# -------------------------------
+# LANGUAGE OPTIONS
+# -------------------------------
 languages = {
     "English":"en",
     "Hindi":"hi",
@@ -74,43 +92,9 @@ languages = {
 
 language = st.selectbox("🌐 Select Language", list(languages.keys()))
 
-# Fertilizer Recommendation
-fertilizer_recommendation = {
-    "rice":"Use NPK fertilizer and organic compost.",
-    "maize":"Use nitrogen rich fertilizer and farmyard manure.",
-    "banana":"Use potassium fertilizer.",
-    "mango":"Use organic manure.",
-    "grapes":"Use phosphorus fertilizer.",
-    "apple":"Use organic compost.",
-    "cotton":"Use potash fertilizer and urea.",
-    "coffee":"Use organic manure and compost."
-}
-
-# Crop Images
-crop_images = {
-    "rice":"https://upload.wikimedia.org/wikipedia/commons/6/6f/Rice_Plant.jpg",
-    "maize":"https://upload.wikimedia.org/wikipedia/commons/4/4e/Maize.jpg",
-    "banana":"https://upload.wikimedia.org/wikipedia/commons/8/8a/Banana_tree.jpg",
-    "mango":"https://upload.wikimedia.org/wikipedia/commons/9/90/Hapus_Mango.jpg",
-    "grapes":"https://upload.wikimedia.org/wikipedia/commons/b/bb/Table_grapes_on_white.jpg",
-    "apple":"https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.jpg",
-    "cotton":"https://upload.wikimedia.org/wikipedia/commons/4/4f/Cotton_bolls.jpg",
-    "coffee":"https://upload.wikimedia.org/wikipedia/commons/4/45/Coffea_arabica.jpg"
-}
-
-# Crop Tips
-crop_tips = {
-    "rice":"Requires high rainfall and standing water.",
-    "maize":"Needs warm weather and nitrogen rich soil.",
-    "banana":"Requires potassium rich soil.",
-    "mango":"Grows well in tropical climates.",
-    "grapes":"Needs well drained soil.",
-    "apple":"Requires cool climate.",
-    "cotton":"Needs warm climate.",
-    "coffee":"Prefers shaded areas."
-}
-
-# Translation Function
+# -------------------------------
+# TRANSLATION FUNCTION
+# -------------------------------
 def translate_text(text, lang):
     if lang == "en":
         return text
@@ -119,7 +103,37 @@ def translate_text(text, lang):
     except:
         return text
 
-# Soil Health
+# -------------------------------
+# FERTILIZER
+# -------------------------------
+fertilizer_recommendation = {
+    "rice":"Use NPK fertilizer and organic compost.",
+    "maize":"Use nitrogen rich fertilizer.",
+    "banana":"Use potassium fertilizer.",
+    "mango":"Use organic manure.",
+    "grapes":"Use phosphorus fertilizer.",
+    "apple":"Use organic compost.",
+    "cotton":"Use potash fertilizer and urea.",
+    "coffee":"Use organic manure."
+}
+
+# -------------------------------
+# CROP TIPS
+# -------------------------------
+crop_tips = {
+    "rice":"Requires high rainfall and standing water.",
+    "maize":"Needs warm weather.",
+    "banana":"Requires potassium rich soil.",
+    "mango":"Grows well in tropical climates.",
+    "grapes":"Needs well drained soil.",
+    "apple":"Requires cool climate.",
+    "cotton":"Needs warm climate.",
+    "coffee":"Prefers shaded areas."
+}
+
+# -------------------------------
+# SOIL HEALTH
+# -------------------------------
 def soil_health(ph):
     if ph < 5:
         return "Soil is acidic"
@@ -128,10 +142,12 @@ def soil_health(ph):
     else:
         return "Soil is healthy"
 
-# Weather API
-st.sidebar.subheader("🌦 Auto Weather Detection")
+# -------------------------------
+# WEATHER
+# -------------------------------
+st.sidebar.subheader("🌦 Auto Weather")
 
-city = st.sidebar.text_input("Enter City Name")
+city = st.sidebar.text_input("Enter City")
 
 temperature = 25
 humidity = 60
@@ -146,18 +162,22 @@ if city:
         st.sidebar.success(f"Temperature: {temperature} °C")
         st.sidebar.success(f"Humidity: {humidity} %")
     except:
-        st.sidebar.warning("Weather data not available")
+        st.sidebar.warning("Weather not available")
 
-# Sidebar Inputs
-st.sidebar.header("Enter Soil & Climate Values")
+# -------------------------------
+# INPUTS
+# -------------------------------
+st.sidebar.header("Enter Soil Values")
 
-N = st.sidebar.number_input("Nitrogen (N)",0,200)
-P = st.sidebar.number_input("Phosphorus (P)",0,200)
-K = st.sidebar.number_input("Potassium (K)",0,200)
-ph = st.sidebar.number_input("Soil pH",0.0,14.0)
-rainfall = st.sidebar.number_input("Rainfall (mm)",0.0,500.0)
+N = st.sidebar.number_input("Nitrogen",0,200)
+P = st.sidebar.number_input("Phosphorus",0,200)
+K = st.sidebar.number_input("Potassium",0,200)
+ph = st.sidebar.number_input("pH",0.0,14.0)
+rainfall = st.sidebar.number_input("Rainfall",0.0,500.0)
 
-# Prediction
+# -------------------------------
+# PREDICTION
+# -------------------------------
 if st.sidebar.button("Recommend Crop"):
 
     input_data = pd.DataFrame(
@@ -168,7 +188,7 @@ if st.sidebar.button("Recommend Crop"):
     predicted_crop = model.predict(input_data)[0]
 
     fertilizer = fertilizer_recommendation.get(predicted_crop,"Use organic fertilizer.")
-    tip = crop_tips.get(predicted_crop,"Follow standard cultivation practices.")
+    tip = crop_tips.get(predicted_crop,"Follow standard practices.")
     soil_status = soil_health(ph)
 
     translated_crop = translate_text(predicted_crop.capitalize(), languages[language])
@@ -177,8 +197,7 @@ if st.sidebar.button("Recommend Crop"):
     translated_soil = translate_text(soil_status, languages[language])
 
     st.markdown(f"""
-    <div style="
-    background-color:#e8f5e9;
+    <div style="background-color:#e8f5e9;
     padding:30px;
     border-radius:15px;
     text-align:center;
@@ -190,42 +209,42 @@ if st.sidebar.button("Recommend Crop"):
 
     <br><br>
 
-    🌱 Recommended Fertilizer : {translated_fertilizer}
+    🌱 Fertilizer : {translated_fertilizer}
 
     <br><br>
 
-    🌍 Soil Condition : {translated_soil}
+    🌍 Soil : {translated_soil}
 
     <br><br>
 
-    📋 Growing Tips : {translated_tip}
+    📋 Tips : {translated_tip}
 
     </div>
     """, unsafe_allow_html=True)
 
-    if predicted_crop in crop_images:
-        st.image(crop_images[predicted_crop], width=400)
+    # -------------------------------
+    # VOICE OUTPUT
+    # -------------------------------
+    speech = f"Recommended crop is {predicted_crop}. Fertilizer is {fertilizer}"
 
-    # 🔊 Voice Output
-    speech = f"Recommended crop is {predicted_crop}. Fertilizer recommendation is {fertilizer}"
     tts = gTTS(speech)
-
     temp_audio = tempfile.NamedTemporaryFile(delete=False)
     tts.save(temp_audio.name)
 
     st.audio(temp_audio.name)
 
-    # 🤖 Explainable AI
-# 🤖 Explainable AI
-st.subheader("🤖 Explainable AI - Feature Importance")
+    # -------------------------------
+    # FEATURE IMPORTANCE (SAFE)
+    # -------------------------------
+    st.subheader("🤖 Feature Importance")
 
-importance = model.feature_importances_
+    if hasattr(model, "feature_importances_"):
+        importance = model.feature_importances_
 
-fig, ax = plt.subplots()
+        fig, ax = plt.subplots()
+        ax.barh(features, importance)
+        ax.set_xlabel("Importance")
 
-ax.barh(features, importance)
-
-ax.set_xlabel("Importance Score")
-ax.set_title("Which Factors Influenced Crop Recommendation")
-
-st.pyplot(fig)
+        st.pyplot(fig)
+    else:
+        st.info("Feature importance not available for this model.")
