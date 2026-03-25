@@ -3,6 +3,8 @@ import pandas as pd
 import joblib
 import base64
 import matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
 from deep_translator import GoogleTranslator
 from gtts import gTTS
 import requests
@@ -10,6 +12,25 @@ import tempfile
 
 # Load ML model
 model = joblib.load("crop_model.pkl")
+# -------------------------------
+# MODEL ACCURACY DISPLAY
+# -------------------------------
+if st.button("Show Model Accuracy"):
+
+    df = pd.read_csv("Crop_recommendation.csv")
+
+    X = df.drop("label", axis=1)
+    y = df["label"]
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
+
+    y_pred = model.predict(X_test)
+
+    acc = accuracy_score(y_test, y_pred)
+
+    st.success(f"Model Accuracy: {acc:.2f}")
 features = joblib.load("feature_names.pkl")
 
 st.set_page_config(page_title="Smart Crop Recommendation", layout="wide")
